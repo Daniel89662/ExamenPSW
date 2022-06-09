@@ -1,0 +1,62 @@
+Admin:
+da de baja docentes
+da de baja alumnos
+da de baja tecnicos
+registra tecnicos
+
+Tecnico 
+ve reportes / resuelve por laboratorio (4 Tablas )
+
+Profesor:
+valida reportes
+da de baja alumnos
+
+<a href="javascript:history.back()"> <input type="button" value="Volver Atras" class="saber-mas" onclick=></a>
+
+
+<%@page import="modelo.Equipo"%>
+<%@page import="modelo.Persona"%>
+<%@page import="controlador.Acciones"%>
+<%@page contentType="text/html" language="java"
+        import="java.sql.*, java.util.*,java.text.*,controlador.Consultas, controlador.Conexion"
+        session="true" %>
+
+<% HttpSession sesion = request.getSession();
+    if (sesion.getAttribute("boleta") == null) {
+        System.out.println("sesion nula");
+        request.getSession().invalidate();
+%>
+<jsp:forward page="index.html" >
+    <jsp:param name="error" 
+               value="Es obligatorio tener una sesion activa" ></jsp:param>
+</jsp:forward>
+<% }
+
+    Consultas verificar = new Consultas();
+
+    Persona alumno = new Persona();
+    int boleta = (int) sesion.getAttribute("boleta");
+    String password = (String) sesion.getAttribute("password");
+
+    alumno.setId(boleta);
+    alumno.setPassword(password);
+    Persona alumno2 = new Persona();
+    alumno2 = verificar.consultarAlumno(alumno);
+
+    if (alumno2.getNombre() == null) {
+        Persona docente = new Persona();
+        docente = verificar.consultarDocente(alumno);
+        if (docente.getNombre() == null) {
+            System.out.println("no se encuentra en bd");
+
+%>
+<jsp:forward page="index.html" >
+    <jsp:param name="error" 
+               value="Es obligatorio tener una sesion activa" ></jsp:param>
+</jsp:forward>
+<% }
+    }
+%>
+<input type="text" placeholder="Etiqueta (solo numeros)" name="etiqueta" value="<%=request.getParameter("Serial")%>" readonly="readonly">
+
+insert into reporte values (null ,'descripcion', 'fecha', 'hora', 1, null,null,null, 1)
